@@ -50,7 +50,7 @@ void list_students(const struct student *list, int count)
         printf("No students found\n");
         return;
     }
-    printf("-------------------------------");
+    printf("-------------------------------\n");
 
     for (int i=0; i<count; i++)
     {
@@ -60,6 +60,15 @@ void list_students(const struct student *list, int count)
     }
 }
 
+int find_student(const struct student *list, int count, int id)
+{
+    for (int i=0; i<count; i++)
+    {
+        if (list[i].id == id) return i;
+    }
+    return -1;
+}
+
 int main()
 {
     struct student students[MAX_STUDENTS];
@@ -67,17 +76,19 @@ int main()
     int choice = 0;
 
     printf("Students Record Manager\n");
+    printf(" \n");
 
     while (choice != 3)
     {
-        printf("\n1. Add student\n2. List students\n3. Exit\n");
+        printf(" \n");
+        printf("Choices: ");
+        printf("\n1. Add student\n2. List students\n3. Exit\n4. Search student\n");
         printf("Enter choice: ");
         if (scanf("%d", &choice) != 1)
         {
             printf("Invalid input\n");
             break;
         }
-        // printf("--------------------------------");
 
         switch(choice)
         {
@@ -90,6 +101,26 @@ int main()
             case 3:
                 printf("Bye\n");
                 break;
+            case 4:
+            {
+                int id;
+                printf("Enter id: ");
+                if (scanf("%d", &id) != 1)
+                {
+                    printf("Invalid id\n");
+                    break;
+                }
+
+                int idx = find_student(students, count, id);
+
+                if (idx == -1) printf("Student not in our record\n");
+                else 
+                {
+                    printf("\nName - %s\n", students[idx].name);
+                    printf("Marks = %.2f\n", students[idx].marks);
+                }
+                break;
+            }
             default:
                 printf("Invalid choice\n");
         }
