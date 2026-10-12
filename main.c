@@ -1,6 +1,7 @@
 #include <stdio.h>
 #define MAX_STUDENTS 100
 #define NAME_LEN 50
+#define DATA_FILE "students.txt"
 
 struct student
 {
@@ -83,16 +84,67 @@ int delete_student(struct student *list, int *count, int id)
     return 0;
 }
 
+int save_students(const char *path, const struct student *list, int count)
+{
+    FILE *fp = fopen(path, "w");
+    if (fp == NULL)
+    {
+        printf("Could not open %s for writing\n", path);
+        return -1;
+    }
+
+    fprintf(fp, "%d\n", count);
+
+    for (int i=0; i<count; i++)
+    {
+        fprintf(fp, "%d %s %f\n", list[i].id, list[i].name, list[i].marks);
+    }
+
+    fclose(fp);
+    return 0;
+}
+
+int load_students(const char *path, struct student *list, int *count)
+{
+    FILE *fp = fopen(path, "r");
+    if (fp == NULL)
+    {
+        *count = 0;
+        return 0;
+    }
+
+    int n;
+    if (fscanf(fp, "%d", &n) != 1 || n < 0 || n > MAX_STUDENTS)
+    {
+        printf("Invalid data file\n");
+        fclose(fp);
+        *count = 0;
+        return -1;
+    }
+
+    int loaded = 0;
+    for (int i=0; i<n; i++)
+    {
+        if (fscanf(fp, "%d %49s %f", &list[i].id, list[i].name, &list[i].marks) != 3) break;
+        loaded++;
+    }
+    fclose(fp);
+    *count = loaded;
+    return 0;
+}
+
 int main(void)
 {
     struct student students[MAX_STUDENTS];
     int count = 0;
     int choice = 0;
 
+    load_students(DATA_FILE, students, &count);
+
     printf("Students Record Manager\n");
     printf(" \n");
 
-    while (choice != 3)
+    while (choice != 5)
     {
         printf(" \n");
         printf("Choices: ");
@@ -149,11 +201,12 @@ int main(void)
                 break;
             }
             case 5:
-                printf("Bye\n");
-                break;
+            printf("Bye\n");
+            break;
             default:
-                printf("Invalid choice\n");
+            printf("Invalid choice\n");
         }
+        save_students(DATA_FILE, students, count);
     }
     return 0;
 }
