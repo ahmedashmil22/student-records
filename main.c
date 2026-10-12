@@ -55,8 +55,8 @@ void list_students(const struct student *list, int count)
     for (int i=0; i<count; i++)
     {
         printf("\nStudent id: %d\n", list[i].id);
-        printf("Student id: %s\n", list[i].name);
-        printf("Student id: %.2f\n", list[i].marks);
+        printf("Student name: %s\n", list[i].name);
+        printf("Student marks: %.2f\n", list[i].marks);
     }
 }
 
@@ -69,7 +69,21 @@ int find_student(const struct student *list, int count, int id)
     return -1;
 }
 
-int main()
+int delete_student(struct student *list, int *count, int id)
+{
+    int idx = find_student(list, *count, id);
+
+    if (idx == -1) return -1;
+
+    for (int i=idx; i<*count-1; i++)
+    {
+        list[i] = list[i+1];
+    }
+    *count = *count - 1;
+    return 0;
+}
+
+int main(void)
 {
     struct student students[MAX_STUDENTS];
     int count = 0;
@@ -82,7 +96,7 @@ int main()
     {
         printf(" \n");
         printf("Choices: ");
-        printf("\n1. Add student\n2. List students\n3. Exit\n4. Search student\n");
+        printf("\n1. Add student\n2. List students\n3. Search student\n4. Delete student\n5. Exit\n");
         printf("Enter choice: ");
         if (scanf("%d", &choice) != 1)
         {
@@ -99,9 +113,6 @@ int main()
                 list_students(students, count);
                 break;
             case 3:
-                printf("Bye\n");
-                break;
-            case 4:
             {
                 int id;
                 printf("Enter id: ");
@@ -121,6 +132,25 @@ int main()
                 }
                 break;
             }
+            case 4:
+            {
+                int id;
+                printf("Enter student's id you want to delete: ");
+                if (scanf("%d", &id) != 1)
+                {
+                    printf("Invalid id\n");
+                    break;
+                }
+                if (delete_student(students, &count, id) == 0)
+                {
+                    printf("DELETED\n");
+                } 
+                else printf("Student not in our record\n");
+                break;
+            }
+            case 5:
+                printf("Bye\n");
+                break;
             default:
                 printf("Invalid choice\n");
         }
