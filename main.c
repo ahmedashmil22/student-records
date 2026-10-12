@@ -25,6 +25,11 @@ int add_student(struct student *list, int *count)
         printf("Invalid id\n");
         return -1;
     }
+    if (find_student(list, *count, list[*count].id != -1))
+    {
+        printf("WARNING!: Id already exists\n");
+        return -1;
+    }
 
     printf("Enter name: ");
     if (scanf("%49s", list[*count].name) != 1)
@@ -59,6 +64,7 @@ void list_students(const struct student *list, int count)
         printf("Student name: %s\n", list[i].name);
         printf("Student marks: %.2f\n", list[i].marks);
     }
+    printf("\n-------------------------------\n");
 }
 
 int find_student(const struct student *list, int count, int id)
